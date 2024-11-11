@@ -1,12 +1,10 @@
 package com.example.weatherapp.ui.screens
 
-import android.window.SplashScreen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -31,21 +28,26 @@ import androidx.compose.ui.unit.sp
 import com.example.weatherapp.R
 import com.example.weatherapp.ui.theme.Primary
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CardDefaults
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.ImageLoader
+import androidx.navigation.NavController
 import coil.decode.GifDecoder
+import com.example.weatherapp.ui.theme.back
 
 
 object BottomShape {
     val medium = RoundedCornerShape(16.dp) // Example shape
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SplashScreenUI() {
 
+@Composable
+fun SplashScreenUI(navController: NavHostController) {
     val annotatedString = AnnotatedString.Builder("Find your weather prediction in your City")
         .apply {
             addStyle(
@@ -59,8 +61,15 @@ fun SplashScreenUI() {
         }
         .toAnnotatedString() // Convert to AnnotatedString
 
-    Box (modifier = Modifier.padding(horizontal = 40.dp).padding(top = 180.dp),
-        contentAlignment = Alignment.TopCenter){
+    // Use a Column to arrange the UI components vertically
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 40.dp),
+        verticalArrangement = Arrangement.Center, // Center vertically
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // Display the animated image
         Image(
             painter = rememberAsyncImagePainter(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -72,45 +81,63 @@ fun SplashScreenUI() {
                     }
                     .build()
             ),
-            contentDescription = "Animated GIF"
+            contentDescription = "Animated GIF",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 80.dp) // Adjust top padding
         )
-    }
 
-    Box (contentAlignment = Alignment.BottomCenter){
+        // Add the card with text and button
+
         Card(
+
             modifier = Modifier
                 .clip(shape = BottomShape.medium)
-                .fillMaxWidth() // Fill the width
+                .fillMaxWidth()
                 .height(350.dp)
-                .shadow(elevation = 10.dp, shape = BottomShape.medium),
+                .shadow(elevation = 0.dp, shape = BottomShape.medium),
+            // Set background color of the Card to match the background (Primary color)
+            colors = CardDefaults.cardColors(containerColor = back)
         ) {
-            Column (
-                modifier = Modifier
-                    .padding(16.dp) // Padding applied first
-                    .fillMaxWidth(), // Fill the width
-                horizontalAlignment = Alignment.CenterHorizontally, // Then center horizontally
-                verticalArrangement = Arrangement.Center
-            ){
-                Text(text = annotatedString,
 
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Spacer(modifier = Modifier.height(86.dp))
+                Text(
+                    text = annotatedString,
                     fontSize = 28.sp,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = "Easy steps to predict the weather",
+                Text(
+                    text = "Easy steps to predict the weather",
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold)
+                    fontWeight = FontWeight.Bold
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { /*TODO*/ },
+
+                // Button to navigate
+                Button(
+                    onClick = { navController.navigate("home") },
                     colors = ButtonDefaults.buttonColors(containerColor = Primary),
                     contentPadding = PaddingValues(horizontal = 30.dp, vertical = 10.dp),
-                    modifier = Modifier.clip(shape = BottomShape.medium)) {
+                    modifier = Modifier
+                        .clip(shape = BottomShape.medium)
+                        .padding(bottom = 16.dp) // Adjust bottom padding
+                ) {
                     Text(text = "Get Started", fontSize = 15.sp)
                 }
             }
         }
     }
+
 }
+
